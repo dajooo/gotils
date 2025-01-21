@@ -19,6 +19,19 @@ I created this library because existing solutions didn't provide all the utiliti
 - `ToPtr[T](slice []T) []*T` - Converts slice of values to slice of pointers
 - `FromPtr[T](slice []*T) []T` - Converts slice of pointers to slice of values
 
+### File
+#### Read
+- `Read(path string) ([]byte, error)` - Reads file as bytes
+- `ReadString(path string) (string, error)` - Reads file as string
+- `ReadLines(path string) ([]string, error)` - Reads file as string array
+- `ReadJson[T](path string, unmarshaler ...json.Unmarshaler) (T, error)` - Reads JSON file into type T
+
+#### Write
+- `Write(path string, data []byte) error` - Writes bytes to file
+- `WriteString(path, data string) error` - Writes string to file
+- `WriteLines(path string, lines []string) error` - Writes string array to file
+- `WriteJson[T](path string, data T, indent ...string) error` - Writes type T as JSON to file
+
 ## Install
 ```
 go get github.com/dajooo/gotils
