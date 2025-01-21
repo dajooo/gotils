@@ -3,7 +3,7 @@
 Simple Go utility functions for common operations.
 
 > [!NOTE]
-> This library is under active development. Many more utility functions will be added soon.
+> This library is under active development. More utility functions will be added in the future.
 
 ## Why
 I created this library because existing solutions didn't provide all the utilities I needed in my projects. While there are many great utility libraries out there, they either lack certain functions or include too many dependencies. This library aims to be a complete solution for my use cases, though it may be opinionated in its implementation choices.
