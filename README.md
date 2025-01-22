@@ -18,6 +18,7 @@ I created this library because existing solutions didn't provide all the utiliti
 
 ### Error
 - `Must[T](value T, err error) T` - Returns value or panics if error occurs
+- `MustOk[T](value T, ok bool) T` - Returns value or panics if ok is false
 
 ### Slice
 - `Map[T, R](slice []T, fn func(T) R) []R` - Maps a slice to another type
