@@ -27,6 +27,7 @@ I created this library because existing solutions didn't provide all the utiliti
 - `MapFromPtr[I, O](slice []*I, fn func(I) O) []O` - Maps slice of pointers to another type
 - `ToPtr[T](slice []T) []*T` - Converts slice of values to slice of pointers
 - `FromPtr[T](slice []*T) []T` - Converts slice of pointers to slice of values
+- `MapNonPtrToPtr[I, O](slice []I, fn func(*I) *O) []*O` - Maps non-pointer slice using a function that takes and returns pointers
 
 ### File
 #### Read
