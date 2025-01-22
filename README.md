@@ -13,6 +13,11 @@ I created this library because existing solutions didn't provide all the utiliti
 ### Pointer
 - `Of(v T) *T` - Creates a pointer from a value
 - `Resolve(v *T) T` - Safely resolves a pointer to its value
+- `ResolveOrDefault(v *T) T` - Resolves a pointer or returns zero value if nil
+- `ResolveOr(v *T, defaultValue T) T` - Resolves a pointer or returns provided default value if nil
+
+### Error
+- `Must[T](value T, err error) T` - Returns value or panics if error occurs
 
 ### Slice
 - `Map[T, R](slice []T, fn func(T) R) []R` - Maps a slice to another type
