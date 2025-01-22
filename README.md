@@ -12,6 +12,7 @@ I created this library because existing solutions didn't provide all the utiliti
 
 ### Pointer
 - `Of(v T) *T` - Creates a pointer from a value
+- `OfOk(v T, ok bool) *T` - Creates a pointer from a value if ok is true, nil otherwise
 - `Resolve(v *T) T` - Safely resolves a pointer to its value
 - `ResolveOrDefault(v *T) T` - Resolves a pointer or returns zero value if nil
 - `ResolveOr(v *T, defaultValue T) T` - Resolves a pointer or returns provided default value if nil
