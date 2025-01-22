@@ -39,6 +39,12 @@ I created this library because existing solutions didn't provide all the utiliti
 - `WriteLines(path string, lines []string) error` - Writes string array to file
 - `WriteJson[T](path string, data T, indent ...string) error` - Writes type T as JSON to file
 
+### Encoding
+- `MarshalJSON[T](v T, marshaler ...json.Marshaler) ([]byte, error)` - Marshals type T into JSON bytes with optional custom marshaler
+- `MustMarshalJSON[T](v T, marshaler ...json.Marshaler) []byte` - Same as MarshalJSON but panics on error
+- `UnmarshalJSON[T](data []byte, unmarshaler ...json.Unmarshaler) (T, error)` - Unmarshals JSON bytes into type T with optional custom unmarshaler
+- `MustUnmarshalJSON[T](data []byte, unmarshaler ...json.Unmarshaler) T` - Same as UnmarshalJSON but panics on error
+
 ## Install
 ```
 go get github.com/dajooo/gotils
