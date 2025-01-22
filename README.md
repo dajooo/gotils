@@ -50,5 +50,5 @@ I created this library because existing solutions didn't provide all the utiliti
 
 ## Install
 ```
-go get github.com/dajooo/gotils
+go get dario.lol/gotils
 ```
