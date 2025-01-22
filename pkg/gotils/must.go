@@ -6,3 +6,10 @@ func Must[T any](value T, err error) T {
 	}
 	return value
 }
+
+func MustOk[T any](value T, ok bool) T {
+	if !ok {
+		panic("function's 'ok' value returned false")
+	}
+	return value
+}
