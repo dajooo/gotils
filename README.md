@@ -48,6 +48,22 @@ I created this library because existing solutions didn't provide all the utiliti
 - `UnmarshalJSON[T](data []byte, unmarshaler ...json.Unmarshaler) (T, error)` - Unmarshals JSON bytes into type T with optional custom unmarshaler
 - `MustUnmarshalJSON[T](data []byte, unmarshaler ...json.Unmarshaler) T` - Same as UnmarshalJSON but panics on error
 
+### Case
+- `DetectCase(s string) StringCaseKind` - Detects the case style of a string
+- `ParseCase(s string) StringCase` - Parses a string into its case parts
+- `(StringCase) ToCamelCase() string` - Converts to camelCase
+- `(StringCase) ToPascalCase() string` - Converts to PascalCase
+- `(StringCase) ToSnakeCase() string` - Converts to snake_case
+- `(StringCase) ToKebabCase() string` - Converts to kebab-case
+- `(StringCase) ToScreamingSnakeCase() string` - Converts to SCREAMING_SNAKE_CASE
+
+Supported case types:
+- CamelCase (e.g. "camelCase")
+- PascalCase (e.g. "PascalCase")
+- SnakeCase (e.g. "snake_case")
+- KebabCase (e.g. "kebab-case")
+- ScreamingSnakeCase (e.g. "SCREAMING_SNAKE_CASE")
+
 ## Install
 ```
 go get dario.lol/gotils
