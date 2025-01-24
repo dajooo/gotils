@@ -18,6 +18,20 @@ func TestMap(t *testing.T) {
 	}
 }
 
+func TestMapIndexed(t *testing.T) {
+	input := []int{1, 2, 3}
+	result := MapIndexed(input, func(i int, v int) string {
+		return string(rune('A' + i))
+	})
+	expected := []string{"A", "B", "C"}
+
+	for i, v := range result {
+		if v != expected[i] {
+			t.Errorf("MapIndexed at index %d got %v, want %v", i, v, expected[i])
+		}
+	}
+}
+
 func TestMapToPtr(t *testing.T) {
 	input := []int{1, 2, 3}
 	result := MapToPtr(input, func(v int) string {

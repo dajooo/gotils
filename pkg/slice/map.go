@@ -8,6 +8,14 @@ func Map[I, O any](slice []I, fn func(value I) O) []O {
 	return result
 }
 
+func MapIndexed[I, O any](slice []I, fn func(index int, value I) O) []O {
+	result := make([]O, len(slice))
+	for index, value := range slice {
+		result[index] = fn(index, value)
+	}
+	return result
+}
+
 func MapToPtr[I, O any](slice []I, fn func(value I) O) []*O {
 	result := make([]*O, len(slice))
 	for index, value := range slice {

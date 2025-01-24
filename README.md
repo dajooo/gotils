@@ -23,6 +23,7 @@ I created this library because existing solutions didn't provide all the utiliti
 
 ### Slice
 - `Map[T, R](slice []T, fn func(T) R) []R` - Maps a slice to another type
+- `MapIndexed[I, O](slice []I, fn func(index int, value I) O) []O` - Maps a slice to another type with index access
 - `MapToPtr[I, O](slice []I, fn func(I) O) []*O` - Maps slice to another type and converts to pointers
 - `MapFromPtr[I, O](slice []*I, fn func(I) O) []O` - Maps slice of pointers to another type
 - `ToPtr[T](slice []T) []*T` - Converts slice of values to slice of pointers
