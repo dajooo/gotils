@@ -43,10 +43,29 @@ I created this library because existing solutions didn't provide all the utiliti
 - `WriteJson[T](path string, data T, indent ...string) error` - Writes type T as JSON to file
 
 ### Encoding
+#### JSON
 - `MarshalJSON[T](v T, marshaler ...json.Marshaler) ([]byte, error)` - Marshals type T into JSON bytes with optional custom marshaler
 - `MustMarshalJSON[T](v T, marshaler ...json.Marshaler) []byte` - Same as MarshalJSON but panics on error
 - `UnmarshalJSON[T](data []byte, unmarshaler ...json.Unmarshaler) (T, error)` - Unmarshals JSON bytes into type T with optional custom unmarshaler
 - `MustUnmarshalJSON[T](data []byte, unmarshaler ...json.Unmarshaler) T` - Same as UnmarshalJSON but panics on error
+
+#### Base64
+String operations:
+- `B64Encode(data string, padding ...rune) string` - Encodes string to base64 string
+- `B64Decode(data string) (string, error)` - Decodes base64 string to string
+- `MustB64Decode(data string) string` - Same as B64Decode but panics on error
+
+Bytes operations:
+- `B64EncodeBytes(data []byte, padding ...rune) string` - Encodes bytes to base64 string
+- `B64DecodeBytes(data []byte) (string, error)` - Decodes base64 bytes to string
+- `B64EncodeBytesToBytes(data []byte, padding ...rune) []byte` - Encodes bytes to base64 bytes
+- `B64DecodeBytesToBytes(data []byte) ([]byte, error)` - Decodes base64 bytes to bytes
+
+URL-safe variants:
+- `B64URLEncode(data string, padding ...rune) string` - URL-safe base64 encoding
+- `B64URLDecode(data string) (string, error)` - URL-safe base64 decoding
+- `B64URLEncodeBytes(data []byte, padding ...rune) string` - URL-safe base64 encoding of bytes
+- `B64URLDecodeBytes(data []byte) (string, error)` - URL-safe base64 decoding to string
 
 ### Case
 - `DetectCase(s string) StringCaseKind` - Detects the case style of a string
