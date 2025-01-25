@@ -35,7 +35,7 @@ func TestMustUnmarshalJSONWithInvalidInput(t *testing.T) {
 
 	defer func() {
 		r := recover()
-		i.True(r != nil) // Should panic for invalid JSON
+		i.True(r != nil)
 	}()
 
 	MustUnmarshalJSON[testStruct]([]byte(`invalid json`))
@@ -46,7 +46,7 @@ func TestMustMarshalJSONWithInvalidValue(t *testing.T) {
 
 	defer func() {
 		r := recover()
-		i.True(r != nil) // Should panic for invalid value
+		i.True(r != nil)
 	}()
 
 	ch := make(chan int)

@@ -41,7 +41,7 @@ func TestB64MustDecodeWithInvalidInput(t *testing.T) {
 
 	defer func() {
 		r := recover()
-		i.True(r != nil) // Should panic for invalid base64
+		i.True(r != nil)
 	}()
 
 	MustB64Decode("invalid-base64")

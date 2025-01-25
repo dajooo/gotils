@@ -20,8 +20,8 @@ func TestMustWithError(t *testing.T) {
 
 	defer func() {
 		r := recover()
-		i.True(r != nil) // Should have panicked
-		i.Equal(r, err)  // Panic value should match error
+		i.True(r != nil)
+		i.Equal(r, err)
 	}()
 
 	Must("", err)
@@ -39,7 +39,7 @@ func TestMustOkWithInvalidValue(t *testing.T) {
 
 	defer func() {
 		r := recover()
-		i.True(r != nil) // Should have panicked
+		i.True(r != nil)
 	}()
 
 	MustOk(0, false)
