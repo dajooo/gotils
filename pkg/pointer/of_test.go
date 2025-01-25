@@ -1,35 +1,29 @@
 package pointer
 
-import "testing"
+import (
+	"testing"
 
-func TestOf(t *testing.T) {
+	"github.com/matryer/is"
+)
+
+func TestOfWithInt(t *testing.T) {
+	i := is.New(t)
 	val := 42
 	ptr := Of(val)
-	if *ptr != val {
-		t.Errorf("Of got %v, want %v", *ptr, val)
-	}
+	i.True(ptr != nil)
+	i.Equal(*ptr, val)
 }
 
-func TestOfOk(t *testing.T) {
-	tests := []struct {
-		name    string
-		value   int
-		ok      bool
-		wantNil bool
-	}{
-		{"ok true", 42, true, false},
-		{"ok false", 42, false, true},
-	}
+func TestOfOkWithTrue(t *testing.T) {
+	i := is.New(t)
+	val := 42
+	result := OfOk(val, true)
+	i.True(result != nil)
+	i.Equal(*result, val)
+}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := OfOk(tt.value, tt.ok)
-			if tt.wantNil && result != nil {
-				t.Error("Expected nil result")
-			}
-			if !tt.wantNil && result == nil {
-				t.Error("Expected non-nil result")
-			}
-		})
-	}
+func TestOfOkWithFalse(t *testing.T) {
+	i := is.New(t)
+	result := OfOk(42, false)
+	i.Equal(result, nil)
 }

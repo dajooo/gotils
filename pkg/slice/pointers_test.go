@@ -1,31 +1,29 @@
 package slice
 
-import "testing"
+import (
+	"testing"
 
-func TestToPtr(t *testing.T) {
+	"github.com/matryer/is"
+)
+
+func TestToPtrWithInts(t *testing.T) {
+	i := is.New(t)
 	input := []int{1, 2, 3}
 	result := ToPtr(input)
 
-	for i, ptr := range result {
-		if ptr == nil {
-			t.Errorf("ToPtr at index %d got nil", i)
-			continue
-		}
-		if *ptr != input[i] {
-			t.Errorf("ToPtr at index %d got %v, want %v", i, *ptr, input[i])
-		}
+	i.True(len(result) == len(input))
+	for idx, ptr := range result {
+		i.True(ptr != nil)
+		i.Equal(*ptr, input[idx])
 	}
 }
 
-func TestFromPtr(t *testing.T) {
+func TestFromPtrWithInts(t *testing.T) {
+	i := is.New(t)
 	one, two, three := 1, 2, 3
 	input := []*int{&one, &two, &three}
 	result := FromPtr(input)
 
 	expected := []int{1, 2, 3}
-	for i, v := range result {
-		if v != expected[i] {
-			t.Errorf("FromPtr at index %d got %v, want %v", i, v, expected[i])
-		}
-	}
+	i.Equal(result, expected)
 }

@@ -2,6 +2,8 @@ package encoding
 
 import (
 	"testing"
+
+	"github.com/matryer/is"
 )
 
 type testStruct struct {
@@ -9,50 +11,44 @@ type testStruct struct {
 	Age  int    `json:"age"`
 }
 
-func TestUnmarshalJSON(t *testing.T) {
+func TestUnmarshalJSONWithValidInput(t *testing.T) {
+	i := is.New(t)
 	data := []byte(`{"name":"test","age":25}`)
 
 	result, err := UnmarshalJSON[testStruct](data)
-	if err != nil {
-		t.Errorf("UnmarshalJSON failed: %v", err)
-	}
-	if result.Name != "test" || result.Age != 25 {
-		t.Errorf("UnmarshalJSON got %+v, want {Name:test Age:25}", result)
-	}
+	i.NoErr(err)
+	i.Equal(result.Name, "test")
+	i.Equal(result.Age, 25)
 }
 
-func TestMarshalJSON(t *testing.T) {
+func TestMarshalJSONWithValidStruct(t *testing.T) {
+	i := is.New(t)
 	data := testStruct{Name: "test", Age: 25}
 
 	result, err := MarshalJSON(data)
-	if err != nil {
-		t.Errorf("MarshalJSON failed: %v", err)
-	}
-
-	expected := `{"name":"test","age":25}`
-	if string(result) != expected {
-		t.Errorf("MarshalJSON got %s, want %s", result, expected)
-	}
+	i.NoErr(err)
+	i.Equal(string(result), `{"name":"test","age":25}`)
 }
 
-func TestMustUnmarshalJSON(t *testing.T) {
+func TestMustUnmarshalJSONWithInvalidInput(t *testing.T) {
+	i := is.New(t)
+
 	defer func() {
-		if r := recover(); r == nil {
-			t.Error("Expected panic for invalid JSON")
-		}
+		r := recover()
+		i.True(r != nil) // Should panic for invalid JSON
 	}()
 
 	MustUnmarshalJSON[testStruct]([]byte(`invalid json`))
 }
 
-func TestMustMarshalJSON(t *testing.T) {
+func TestMustMarshalJSONWithInvalidValue(t *testing.T) {
+	i := is.New(t)
+
 	defer func() {
-		if r := recover(); r == nil {
-			t.Error("Expected panic for invalid value")
-		}
+		r := recover()
+		i.True(r != nil) // Should panic for invalid value
 	}()
 
-	// Create a value that can't be marshaled
 	ch := make(chan int)
 	MustMarshalJSON(ch)
 }

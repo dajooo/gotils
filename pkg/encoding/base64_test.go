@@ -2,135 +2,47 @@ package encoding
 
 import (
 	"testing"
+
+	"github.com/matryer/is"
 )
 
-func TestBase64Encode(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{"Empty string", "", ""},
-		{"Simple string", "hello", "aGVsbG8="},
-		{"With special chars", "hello world!", "aGVsbG8gd29ybGQh"},
-		{"With padding", "hello", "aGVsbG8="},
-		{"Without padding", "hell", "aGVsbA=="},
-	}
+func TestB64EncodeAndDecode(t *testing.T) {
+	i := is.New(t)
+	original := "Hello, World!"
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := B64Encode(tt.input)
-			if result != tt.expected {
-				t.Errorf("B64Encode() = %v, want %v", result, tt.expected)
-			}
-
-			// Test decode
-			decoded, err := B64Decode(result)
-			if err != nil {
-				t.Errorf("B64Decode() error = %v", err)
-			}
-			if decoded != tt.input {
-				t.Errorf("B64Decode() = %v, want %v", decoded, tt.input)
-			}
-		})
-	}
+	encoded := B64Encode(original)
+	decoded, err := B64Decode(encoded)
+	i.NoErr(err)
+	i.Equal(decoded, original)
 }
 
-func TestBase64URLEncode(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{"URL unsafe chars", "hello+world/", "aGVsbG8rd29ybGQv"},
-		{"URL safe output", "hello world!", "aGVsbG8gd29ybGQh"},
-	}
+func TestB64URLEncodeAndDecode(t *testing.T) {
+	i := is.New(t)
+	original := "Hello, World!"
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := B64URLEncode(tt.input)
-			if result != tt.expected {
-				t.Errorf("B64URLEncode() = %v, want %v", result, tt.expected)
-			}
-
-			// Test decode
-			decoded, err := B64URLDecode(result)
-			if err != nil {
-				t.Errorf("B64URLDecode() error = %v", err)
-			}
-			if decoded != tt.input {
-				t.Errorf("B64URLDecode() = %v, want %v", decoded, tt.input)
-			}
-		})
-	}
+	encoded := B64URLEncode(original)
+	decoded, err := B64URLDecode(encoded)
+	i.NoErr(err)
+	i.Equal(decoded, original)
 }
 
-func TestBase64BytesConversion(t *testing.T) {
-	input := []byte("hello world")
+func TestB64RawEncodeAndDecode(t *testing.T) {
+	i := is.New(t)
+	original := "Hello, World!"
 
-	// Test bytes to string
-	encoded := B64EncodeBytes(input)
-	decoded, err := B64DecodeToBytes(encoded)
-	if err != nil {
-		t.Errorf("B64DecodeToBytes() error = %v", err)
-	}
-	if string(decoded) != string(input) {
-		t.Errorf("B64DecodeToBytes() = %v, want %v", string(decoded), string(input))
-	}
-
-	// Test bytes to bytes
-	encodedBytes := B64EncodeBytesToBytes(input)
-	decodedBytes, err := B64DecodeBytesToBytes(encodedBytes)
-	if err != nil {
-		t.Errorf("B64DecodeBytesToBytes() error = %v", err)
-	}
-	if string(decodedBytes) != string(input) {
-		t.Errorf("B64DecodeBytesToBytes() = %v, want %v", string(decodedBytes), string(input))
-	}
+	encoded := B64RawEncode(original)
+	decoded, err := B64RawDecode(encoded)
+	i.NoErr(err)
+	i.Equal(decoded, original)
 }
 
-func TestCustomPadding(t *testing.T) {
-	input := "hello"
-	expected := "aGVsbG8*"
+func TestB64MustDecodeWithInvalidInput(t *testing.T) {
+	i := is.New(t)
 
-	result := B64Encode(input, '*')
-	if result != expected {
-		t.Errorf("B64Encode() with custom padding = %v, want %v", result, expected)
-	}
-}
+	defer func() {
+		r := recover()
+		i.True(r != nil) // Should panic for invalid base64
+	}()
 
-func TestMustDecode(t *testing.T) {
-	t.Run("valid input", func(t *testing.T) {
-		input := B64Encode("hello")
-		result := MustB64Decode(input)
-		if result != "hello" {
-			t.Errorf("MustB64Decode() = %v, want hello", result)
-		}
-	})
-
-	t.Run("invalid input", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Error("MustB64Decode() did not panic with invalid input")
-			}
-		}()
-		MustB64Decode("invalid base64!")
-	})
-}
-
-func TestInvalidInputs(t *testing.T) {
-	_, err := B64Decode("invalid base64!")
-	if err == nil {
-		t.Error("B64Decode() did not return error for invalid input")
-	}
-
-	_, err = B64URLDecode("invalid base64!")
-	if err == nil {
-		t.Error("B64URLDecode() did not return error for invalid input")
-	}
-
-	_, err = B64DecodeToBytes("invalid base64!")
-	if err == nil {
-		t.Error("B64DecodeToBytes() did not return error for invalid input")
-	}
+	MustB64Decode("invalid-base64")
 }

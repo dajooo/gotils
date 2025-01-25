@@ -1,43 +1,45 @@
 package pointer
 
-import "testing"
+import (
+	"testing"
 
-func TestResolve(t *testing.T) {
+	"github.com/matryer/is"
+)
+
+func TestResolveWithValue(t *testing.T) {
+	i := is.New(t)
 	val := 42
 	ptr := &val
 	result := Resolve(ptr)
-	if result != val {
-		t.Errorf("Resolve got %v, want %v", result, val)
-	}
+	i.Equal(result, val)
 }
 
-func TestResolveOrDefault(t *testing.T) {
+func TestResolveOrDefaultWithValue(t *testing.T) {
+	i := is.New(t)
 	val := 42
-	var nilPtr *int
-
-	result1 := ResolveOrDefault(&val)
-	if result1 != val {
-		t.Errorf("ResolveOrDefault got %v, want %v", result1, val)
-	}
-
-	result2 := ResolveOrDefault(nilPtr)
-	if result2 != 0 {
-		t.Errorf("ResolveOrDefault got %v, want 0", result2)
-	}
+	result := ResolveOrDefault(&val)
+	i.Equal(result, val)
 }
 
-func TestResolveOr(t *testing.T) {
+func TestResolveOrDefaultWithNil(t *testing.T) {
+	i := is.New(t)
+	var nilPtr *int
+	result := ResolveOrDefault(nilPtr)
+	i.Equal(result, 0)
+}
+
+func TestResolveOrWithValue(t *testing.T) {
+	i := is.New(t)
 	val := 42
 	defaultVal := 100
+	result := ResolveOr(&val, defaultVal)
+	i.Equal(result, val)
+}
+
+func TestResolveOrWithNil(t *testing.T) {
+	i := is.New(t)
 	var nilPtr *int
-
-	result1 := ResolveOr(&val, defaultVal)
-	if result1 != val {
-		t.Errorf("ResolveOr got %v, want %v", result1, val)
-	}
-
-	result2 := ResolveOr(nilPtr, defaultVal)
-	if result2 != defaultVal {
-		t.Errorf("ResolveOr got %v, want %v", result2, defaultVal)
-	}
+	defaultVal := 100
+	result := ResolveOr(nilPtr, defaultVal)
+	i.Equal(result, defaultVal)
 }

@@ -3,68 +3,55 @@ package file
 import (
 	"os"
 	"testing"
+
+	"github.com/matryer/is"
 )
 
-func TestReadWrite(t *testing.T) {
+func TestWriteAndRead(t *testing.T) {
+	i := is.New(t)
 	tempFile := "test.txt"
 	defer os.Remove(tempFile)
 
-	// Test Write
 	testData := []byte("test data")
 	err := Write(tempFile, testData)
-	if err != nil {
-		t.Fatalf("Write failed: %v", err)
-	}
+	i.NoErr(err)
 
-	// Test Read
 	data, err := Read(tempFile)
-	if err != nil {
-		t.Fatalf("Read failed: %v", err)
-	}
-	if string(data) != string(testData) {
-		t.Errorf("Read got %s, want %s", data, testData)
-	}
+	i.NoErr(err)
+	i.Equal(string(data), string(testData))
 }
 
-func TestReadWriteString(t *testing.T) {
+func TestWriteAndReadString(t *testing.T) {
+	i := is.New(t)
 	tempFile := "test_string.txt"
 	defer os.Remove(tempFile)
 
 	testStr := "test string"
 	err := WriteString(tempFile, testStr)
-	if err != nil {
-		t.Fatalf("WriteString failed: %v", err)
-	}
+	i.NoErr(err)
 
 	result, err := ReadString(tempFile)
-	if err != nil {
-		t.Fatalf("ReadString failed: %v", err)
-	}
-	if result != testStr {
-		t.Errorf("ReadString got %s, want %s", result, testStr)
-	}
+	i.NoErr(err)
+	i.Equal(result, testStr)
 }
 
-func TestReadWriteLines(t *testing.T) {
+func TestWriteAndReadLines(t *testing.T) {
+	i := is.New(t)
 	tempFile := "test_lines.txt"
 	defer os.Remove(tempFile)
 
 	lines := []string{"line1", "line2", "line3"}
 	err := WriteLines(tempFile, lines)
-	if err != nil {
-		t.Fatalf("WriteLines failed: %v", err)
-	}
+	i.NoErr(err)
 
 	result, err := ReadLines(tempFile)
-	if err != nil {
-		t.Fatalf("ReadLines failed: %v", err)
-	}
-	if len(result) != len(lines) {
-		t.Errorf("ReadLines got %d lines, want %d", len(result), len(lines))
-	}
+	i.NoErr(err)
+	i.Equal(len(result), len(lines))
+	i.Equal(result, lines)
 }
 
-func TestReadWriteJson(t *testing.T) {
+func TestWriteAndReadJson(t *testing.T) {
+	i := is.New(t)
 	tempFile := "test.json"
 	defer os.Remove(tempFile)
 
@@ -77,22 +64,13 @@ func TestReadWriteJson(t *testing.T) {
 	}
 
 	err := WriteJson(tempFile, data, "  ")
-	if err != nil {
-		t.Fatalf("WriteJson failed: %v", err)
-	}
+	i.NoErr(err)
 
-	var result struct {
-		Name string `json:"name"`
-		Age  int    `json:"age"`
-	}
-	result, err = ReadJson[struct {
+	result, err := ReadJson[struct {
 		Name string `json:"name"`
 		Age  int    `json:"age"`
 	}](tempFile)
-	if err != nil {
-		t.Fatalf("ReadJson failed: %v", err)
-	}
-	if result.Name != data.Name || result.Age != data.Age {
-		t.Errorf("ReadJson got %+v, want %+v", result, data)
-	}
+	i.NoErr(err)
+	i.Equal(result.Name, data.Name)
+	i.Equal(result.Age, data.Age)
 }
