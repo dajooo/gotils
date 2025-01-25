@@ -29,6 +29,9 @@ I created this library because existing solutions didn't provide all the utiliti
 - `ToPtr[T](slice []T) []*T` - Converts slice of values to slice of pointers
 - `FromPtr[T](slice []*T) []T` - Converts slice of pointers to slice of values
 - `MapNonPtrToPtr[I, O](slice []I, fn func(*I) *O) []*O` - Maps non-pointer slice using a function that takes and returns pointers
+- `Filter[T](s []T, f func(T) bool) []T` - Filters slice elements based on predicate function
+- `FilterInstanceOf[T](s []any) []T` - Filters slice elements by type assertion
+- `FilterNotNil[T](s []*T) []T` - Filters out nil elements from slice of pointers
 
 ### File
 #### Read
