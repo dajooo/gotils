@@ -167,3 +167,191 @@ func TestArgon2idAllStringVariants(t *testing.T) {
 	hash3 := Argon2idStringToStringWithParams(password, salt, params)
 	i.True(strings.HasPrefix(hash3, "$argon2id$"))
 }
+
+// ... existing code ...
+
+func TestVerifyArgon2id(t *testing.T) {
+	i := is.New(t)
+	password := []byte("password123")
+
+	// Generate a hash
+	hashedPassword, err := Argon2idBytesToString(password)
+	i.NoErr(err)
+
+	// Verify correct password
+	match, err := VerifyArgon2id(hashedPassword, password)
+	i.NoErr(err)
+	i.True(match)
+
+	// Verify wrong password
+	match, err = VerifyArgon2id(hashedPassword, []byte("wrongpassword"))
+	i.NoErr(err)
+	i.True(!match)
+}
+
+func TestVerifyArgon2idString(t *testing.T) {
+	i := is.New(t)
+	password := "password123"
+
+	// Generate a hash
+	hashedPassword, err := Argon2idStringToString(password)
+	i.NoErr(err)
+
+	// Verify correct password
+	match, err := VerifyArgon2idString(hashedPassword, password)
+	i.NoErr(err)
+	i.True(match)
+
+	// Verify wrong password
+	match, err = VerifyArgon2idString(hashedPassword, "wrongpassword")
+	i.NoErr(err)
+	i.True(!match)
+}
+
+func TestVerifyArgon2idInvalidFormat(t *testing.T) {
+	testCases := []struct {
+		name     string
+		hash     string
+		expected string
+	}{
+		{
+			name:     "empty string",
+			hash:     "",
+			expected: "invalid hash format: must start with $",
+		},
+		{
+			name:     "no dollar prefix",
+			hash:     "argon2id",
+			expected: "invalid hash format: must start with $",
+		},
+		{
+			name:     "insufficient parts",
+			hash:     "$argon2id$v=19",
+			expected: "invalid hash format: expected 6 parts",
+		},
+		{
+			name:     "wrong algorithm",
+			hash:     "$argon2i$v=19$m=2,t=32768,p=4$c2FsdA$aGFzaA",
+			expected: "invalid algorithm: expected argon2id",
+		},
+		{
+			name:     "wrong version",
+			hash:     "$argon2id$v=20$m=2,t=32768,p=4$c2FsdA$aGFzaA",
+			expected: "invalid version: expected v=19",
+		},
+		{
+			name:     "malformed parameters",
+			hash:     "$argon2id$v=19$x=2,y=32768,z=4$c2FsdA$aGFzaA",
+			expected: "invalid parameters format: failed to parse m,t,p values",
+		},
+		{
+			name:     "invalid salt base64",
+			hash:     "$argon2id$v=19$m=2,t=32768,p=4$>>>$aGFzaA",
+			expected: "illegal base64",
+		},
+		{
+			name:     "invalid hash base64",
+			hash:     "$argon2id$v=19$m=2,t=32768,p=4$c2FsdA$>>>",
+			expected: "illegal base64",
+		},
+		{
+			name:     "empty salt",
+			hash:     "$argon2id$v=19$m=2,t=32768,p=4$$aGFzaA",
+			expected: "invalid salt: cannot be empty",
+		},
+		{
+			name:     "empty hash",
+			hash:     "$argon2id$v=19$m=2,t=32768,p=4$c2FsdA$",
+			expected: "invalid hash: cannot be empty",
+		},
+		{
+			name:     "zero memory",
+			hash:     "$argon2id$v=19$m=0,t=32768,p=4$c2FsdA$aGFzaA",
+			expected: "invalid parameters: values must be greater than 0",
+		},
+		{
+			name:     "zero iterations",
+			hash:     "$argon2id$v=19$m=2,t=0,p=4$c2FsdA$aGFzaA",
+			expected: "invalid parameters: values must be greater than 0",
+		},
+		{
+			name:     "zero parallelism",
+			hash:     "$argon2id$v=19$m=2,t=32768,p=0$c2FsdA$aGFzaA",
+			expected: "invalid parameters: values must be greater than 0",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			is := is.New(t)
+			_, err := VerifyArgon2id(tc.hash, []byte("password"))
+			is.True(err != nil) // should have an error
+			t.Logf("Expected: %q, Got: %q", tc.expected, err.Error())
+			is.True(strings.Contains(err.Error(), tc.expected)) // error should contain expected message
+		})
+	}
+}
+
+func TestMustVerifyArgon2id(t *testing.T) {
+	i := is.New(t)
+	password := []byte("password123")
+
+	hashedPassword, err := Argon2idBytesToString(password)
+	i.NoErr(err)
+
+	// Should not panic with correct format
+	i.True(MustVerifyArgon2id(hashedPassword, password))
+	i.True(!MustVerifyArgon2id(hashedPassword, []byte("wrongpassword")))
+}
+
+func TestMustVerifyArgon2idPanic(t *testing.T) {
+	i := is.New(t)
+
+	// Should panic with invalid format
+	defer func() {
+		r := recover()
+		i.True(r != nil)
+	}()
+
+	MustVerifyArgon2id("invalid", []byte("password"))
+}
+
+func TestVerifyArgon2idWithCustomParams(t *testing.T) {
+	i := is.New(t)
+	password := []byte("password123")
+	salt := []byte("0123456789abcdef")
+	params := Argon2idParams{
+		Memory:      4,
+		Iterations:  1,
+		Parallelism: 2,
+		KeyLen:      64,
+	}
+
+	hashedPassword := Argon2idBytesToStringWithParams(password, salt, params)
+
+	// Verify with correct password
+	match, err := VerifyArgon2id(hashedPassword, password)
+	i.NoErr(err)
+	i.True(match)
+
+	// Verify with wrong password
+	match, err = VerifyArgon2id(hashedPassword, []byte("wrongpassword"))
+	i.NoErr(err)
+	i.True(!match)
+}
+
+func TestVerifyArgon2idWithUnicode(t *testing.T) {
+	i := is.New(t)
+	password := "パスワード"
+
+	hashedPassword, err := Argon2idStringToString(password)
+	i.NoErr(err)
+
+	match, err := VerifyArgon2idString(hashedPassword, password)
+	i.NoErr(err)
+	i.True(match)
+
+	match, err = VerifyArgon2idString(hashedPassword, "incorrect")
+	i.NoErr(err)
+	i.True(!match)
+}

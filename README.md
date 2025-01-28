@@ -121,6 +121,12 @@ String input/output operations:
 - `Argon2idStringToStringWithSalt(password string, salt []byte) string` - Hash password string with custom salt, output formatted string
 - `Argon2idStringToStringWithParams(password string, salt []byte, p Argon2idParams) string` - Hash password string with custom salt and parameters, output formatted string
 
+Verification operations:
+- `VerifyArgon2id(hashedPassword string, password []byte) (bool, error)` - Verify password bytes against a hashed password
+- `VerifyArgon2idString(hashedPassword, password string) (bool, error)` - Verify password string against a hashed password
+- `MustVerifyArgon2id(hashedPassword string, password []byte) bool` - Same as VerifyArgon2id but panics on error
+- `MustVerifyArgon2idString(hashedPassword, password string) bool` - Same as VerifyArgon2idString but panics on error
+
 Default parameters:
 - Memory: 2 KB
 - Iterations: 32,768

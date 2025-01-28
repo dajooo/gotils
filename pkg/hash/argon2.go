@@ -1,9 +1,11 @@
 package hash
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"strings"
 
 	"golang.org/x/crypto/argon2"
 )
@@ -40,7 +42,6 @@ func formatArgon2id(salt, hash []byte, p Argon2idParams) string {
 		base64.RawStdEncoding.EncodeToString(hash))
 }
 
-// []byte output
 func Argon2idBytes(password []byte) ([]byte, error) {
 	salt, err := generateArgon2idSalt()
 	if err != nil {
@@ -57,7 +58,6 @@ func Argon2idBytesWithParams(password, salt []byte, p Argon2idParams) []byte {
 	return argon2.IDKey(password, salt, p.Iterations, p.Memory, p.Parallelism, p.KeyLen)
 }
 
-// string output
 func Argon2idBytesToString(password []byte) (string, error) {
 	salt, err := generateArgon2idSalt()
 	if err != nil {
@@ -77,7 +77,6 @@ func Argon2idBytesToStringWithParams(password, salt []byte, p Argon2idParams) st
 	return formatArgon2id(salt, hash, p)
 }
 
-// string input -> []byte output
 func Argon2idString(password string) ([]byte, error) {
 	return Argon2idBytes([]byte(password))
 }
@@ -90,7 +89,6 @@ func Argon2idStringWithParams(password string, salt []byte, p Argon2idParams) []
 	return Argon2idBytesWithParams([]byte(password), salt, p)
 }
 
-// string input -> string output
 func Argon2idStringToString(password string) (string, error) {
 	return Argon2idBytesToString([]byte(password))
 }
@@ -101,4 +99,81 @@ func Argon2idStringToStringWithSalt(password string, salt []byte) string {
 
 func Argon2idStringToStringWithParams(password string, salt []byte, p Argon2idParams) string {
 	return Argon2idBytesToStringWithParams([]byte(password), salt, p)
+}
+
+func VerifyArgon2id(hashedPassword string, password []byte) (bool, error) {
+	if len(hashedPassword) == 0 || !strings.HasPrefix(hashedPassword, "$") {
+		return false, fmt.Errorf("invalid hash format: must start with $")
+	}
+
+	parts := strings.Split(hashedPassword, "$")
+	if len(parts) != 6 {
+		return false, fmt.Errorf("invalid hash format: expected 6 parts, got %d", len(parts))
+	}
+
+	if parts[1] != "argon2id" {
+		return false, fmt.Errorf("invalid algorithm: expected argon2id, got %s", parts[1])
+	}
+
+	if parts[2] != "v=19" {
+		return false, fmt.Errorf("invalid version: expected v=19, got %s", parts[2])
+	}
+
+	var memory uint32
+	var iterations uint32
+	var parallelism uint8
+
+	paramCount, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &memory, &iterations, &parallelism)
+	if err != nil || paramCount != 3 {
+		return false, fmt.Errorf("invalid parameters format: failed to parse m,t,p values")
+	}
+
+	if memory == 0 || iterations == 0 || parallelism == 0 {
+		return false, fmt.Errorf("invalid parameters: values must be greater than 0")
+	}
+
+	salt, err := base64.RawStdEncoding.DecodeString(parts[4])
+	if err != nil {
+		return false, fmt.Errorf("illegal base64")
+	}
+
+	if len(salt) == 0 {
+		return false, fmt.Errorf("invalid salt: cannot be empty")
+	}
+
+	decodedHash, err := base64.RawStdEncoding.DecodeString(parts[5])
+	if err != nil {
+		return false, fmt.Errorf("illegal base64")
+	}
+
+	if len(decodedHash) == 0 {
+		return false, fmt.Errorf("invalid hash: cannot be empty")
+	}
+
+	params := Argon2idParams{
+		Memory:      memory,
+		Iterations:  iterations,
+		Parallelism: parallelism,
+		KeyLen:      uint32(len(decodedHash)),
+	}
+
+	computedHash := Argon2idBytesWithParams(password, salt, params)
+
+	return bytes.Equal(decodedHash, computedHash), nil
+}
+
+func VerifyArgon2idString(hashedPassword, password string) (bool, error) {
+	return VerifyArgon2id(hashedPassword, []byte(password))
+}
+
+func MustVerifyArgon2id(hashedPassword string, password []byte) bool {
+	match, err := VerifyArgon2id(hashedPassword, password)
+	if err != nil {
+		panic(err)
+	}
+	return match
+}
+
+func MustVerifyArgon2idString(hashedPassword, password string) bool {
+	return MustVerifyArgon2id(hashedPassword, []byte(password))
 }
