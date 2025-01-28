@@ -87,6 +87,48 @@ Supported case types:
 - KebabCase (e.g. "kebab-case")
 - ScreamingSnakeCase (e.g. "SCREAMING_SNAKE_CASE")
 
+### Hash
+#### Argon2id
+Password hashing functions using Argon2id with configurable parameters:
+
+Parameters struct:
+```go
+type Argon2idParams struct {
+    Memory      uint32 // Memory usage in KB
+    Iterations  uint32 // Number of iterations
+    Parallelism uint8  // Degree of parallelism
+    KeyLen      uint32 // Length of the hash in bytes
+}
+```
+
+Byte operations:
+- `Argon2idBytes(password []byte) ([]byte, error)` - Hash password bytes with default parameters
+- `Argon2idBytesWithSalt(password, salt []byte) []byte` - Hash password bytes with custom salt
+- `Argon2idBytesWithParams(password, salt []byte, p Argon2idParams) []byte` - Hash password bytes with custom salt and parameters
+
+String input operations:
+- `Argon2idString(password string) ([]byte, error)` - Hash password string, output bytes
+- `Argon2idStringWithSalt(password string, salt []byte) []byte` - Hash password string with custom salt
+- `Argon2idStringWithParams(password string, salt []byte, p Argon2idParams) []byte` - Hash password string with custom salt and parameters
+
+String output operations:
+- `Argon2idBytesToString(password []byte) (string, error)` - Hash password bytes, output formatted string
+- `Argon2idBytesToStringWithSalt(password, salt []byte) string` - Hash password bytes with custom salt, output formatted string
+- `Argon2idBytesToStringWithParams(password, salt []byte, p Argon2idParams) string` - Hash password bytes with custom salt and parameters, output formatted string
+
+String input/output operations:
+- `Argon2idStringToString(password string) (string, error)` - Hash password string, output formatted string
+- `Argon2idStringToStringWithSalt(password string, salt []byte) string` - Hash password string with custom salt, output formatted string
+- `Argon2idStringToStringWithParams(password string, salt []byte, p Argon2idParams) string` - Hash password string with custom salt and parameters, output formatted string
+
+Default parameters:
+- Memory: 2 KB
+- Iterations: 32,768
+- Parallelism: 4
+- Key Length: 32 bytes
+
+String output format: `$argon2id$v=19$m=memory,t=iterations,p=parallelism$salt$hash`
+
 ## Install
 ```
 go get dario.lol/gotils
