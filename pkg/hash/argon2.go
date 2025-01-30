@@ -18,8 +18,8 @@ type Argon2idParams struct {
 }
 
 var Argon2idDefaultParams = Argon2idParams{
-	Memory:      2,
-	Iterations:  32 * 1024,
+	Memory:      64 * 1024,
+	Iterations:  3,
 	Parallelism: 4,
 	KeyLen:      32,
 }
