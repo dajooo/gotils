@@ -135,6 +135,76 @@ Default parameters:
 
 String output format: `$argon2id$v=19$m=memory,t=iterations,p=parallelism$salt$hash`
 
+### Password
+#### Generation
+Generate secure passwords with configurable options:
+
+```go
+type GenerateConfig struct {
+    Length        int     // Password length
+    UseUpper      bool    // Include uppercase letters
+    UseLower      bool    // Include lowercase letters
+    UseNumbers    bool    // Include numbers
+    UseSpecial    bool    // Include special characters
+    CustomCharset string  // Custom character set
+    ExcludeChars  string  // Characters to exclude
+}
+```
+
+Generation functions:
+- `Generate(options ...GenerateOption) (string, error)` - Generates a password with specified options
+- `MustGenerate(options ...GenerateOption) string` - Same as Generate but panics on error
+
+Generation options:
+- `GenerateWithLengthOption(length int)` - Sets password length (default: 16)
+- `GenerateWithoutUpperOption()` - Excludes uppercase letters
+- `GenerateWithoutLowerOption()` - Excludes lowercase letters
+- `GenerateWithoutNumbersOption()` - Excludes numbers
+- `GenerateWithoutSpecialOption()` - Excludes special characters
+- `GenerateWithCustomCharsetOption(charset string)` - Uses custom character set
+- `GenerateWithExcludedCharsOption(chars string)` - Excludes specific characters
+
+Default character sets:
+- Uppercase: A-Z
+- Lowercase: a-z
+- Numbers: 0-9
+- Special: !@#$%^&*()_+-=[]{}|;:,.<>?
+
+#### Verification
+Validate passwords against common security criteria:
+
+```go
+type VerifyConfig struct {
+    MinLength    int     // Minimum length required
+    MaxLength    int     // Maximum length allowed
+    UseUpper     bool    // Require uppercase letters
+    UseLower     bool    // Require lowercase letters
+    UseNumbers   bool    // Require numbers
+    UseSpecial   bool    // Require special characters
+}
+```
+
+Verification functions:
+- `Verify(password string, options ...VerifyOption) error` - Validates password against criteria
+- `MustVerify(password string, options ...VerifyOption)` - Same as Verify but panics on error
+
+Verification options:
+- `VerifyWithMinLengthOption(length int)` - Sets minimum length (default: 8)
+- `VerifyWithMaxLengthOption(length int)` - Sets maximum length (default: 128)
+- `VerifyWithoutUpperOption()` - Removes uppercase requirement
+- `VerifyWithoutLowerOption()` - Removes lowercase requirement
+- `VerifyWithoutNumbersOption()` - Removes numbers requirement
+- `VerifyWithoutSpecialOption()` - Removes special characters requirement
+
+Default requirements:
+- Minimum length: 8 characters
+- Maximum length: 128 characters
+- Must contain at least one:
+    - Uppercase letter
+    - Lowercase letter
+    - Number
+    - Special character
+
 ## Install
 ```
 go get dario.lol/gotils

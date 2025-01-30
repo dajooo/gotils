@@ -168,22 +168,17 @@ func TestArgon2idAllStringVariants(t *testing.T) {
 	i.True(strings.HasPrefix(hash3, "$argon2id$"))
 }
 
-// ... existing code ...
-
 func TestVerifyArgon2id(t *testing.T) {
 	i := is.New(t)
 	password := []byte("password123")
 
-	// Generate a hash
 	hashedPassword, err := Argon2idBytesToString(password)
 	i.NoErr(err)
 
-	// Verify correct password
 	match, err := VerifyArgon2id(hashedPassword, password)
 	i.NoErr(err)
 	i.True(match)
 
-	// Verify wrong password
 	match, err = VerifyArgon2id(hashedPassword, []byte("wrongpassword"))
 	i.NoErr(err)
 	i.True(!match)
@@ -193,16 +188,13 @@ func TestVerifyArgon2idString(t *testing.T) {
 	i := is.New(t)
 	password := "password123"
 
-	// Generate a hash
 	hashedPassword, err := Argon2idStringToString(password)
 	i.NoErr(err)
 
-	// Verify correct password
 	match, err := VerifyArgon2idString(hashedPassword, password)
 	i.NoErr(err)
 	i.True(match)
 
-	// Verify wrong password
 	match, err = VerifyArgon2idString(hashedPassword, "wrongpassword")
 	i.NoErr(err)
 	i.True(!match)
@@ -285,9 +277,9 @@ func TestVerifyArgon2idInvalidFormat(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			is := is.New(t)
 			_, err := VerifyArgon2id(tc.hash, []byte("password"))
-			is.True(err != nil) // should have an error
+			is.True(err != nil)
 			t.Logf("Expected: %q, Got: %q", tc.expected, err.Error())
-			is.True(strings.Contains(err.Error(), tc.expected)) // error should contain expected message
+			is.True(strings.Contains(err.Error(), tc.expected))
 		})
 	}
 }
@@ -299,7 +291,6 @@ func TestMustVerifyArgon2id(t *testing.T) {
 	hashedPassword, err := Argon2idBytesToString(password)
 	i.NoErr(err)
 
-	// Should not panic with correct format
 	i.True(MustVerifyArgon2id(hashedPassword, password))
 	i.True(!MustVerifyArgon2id(hashedPassword, []byte("wrongpassword")))
 }
@@ -307,7 +298,6 @@ func TestMustVerifyArgon2id(t *testing.T) {
 func TestMustVerifyArgon2idPanic(t *testing.T) {
 	i := is.New(t)
 
-	// Should panic with invalid format
 	defer func() {
 		r := recover()
 		i.True(r != nil)
@@ -329,12 +319,10 @@ func TestVerifyArgon2idWithCustomParams(t *testing.T) {
 
 	hashedPassword := Argon2idBytesToStringWithParams(password, salt, params)
 
-	// Verify with correct password
 	match, err := VerifyArgon2id(hashedPassword, password)
 	i.NoErr(err)
 	i.True(match)
 
-	// Verify with wrong password
 	match, err = VerifyArgon2id(hashedPassword, []byte("wrongpassword"))
 	i.NoErr(err)
 	i.True(!match)

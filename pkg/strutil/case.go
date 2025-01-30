@@ -3,6 +3,9 @@ package strutil
 import (
 	"strings"
 	"unicode"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type StringCaseKind string
@@ -133,17 +136,14 @@ func ParseCase(s string) StringCase {
 
 	switch kind {
 	case SnakeCase, KebabCase:
-		// First split by primary delimiter
 		primarySep := byte('_')
 		secondarySep := byte('-')
 		if kind == KebabCase {
 			primarySep, secondarySep = secondarySep, primarySep
 		}
 
-		// Split by primary delimiter first
 		tempParts := strings.Split(s, string(primarySep))
 
-		// Then handle secondary delimiters
 		for _, part := range tempParts {
 			if strings.Contains(part, string(secondarySep)) {
 				subParts := strings.Split(part, string(secondarySep))
@@ -158,7 +158,6 @@ func ParseCase(s string) StringCase {
 		}
 	default:
 		parts = splitCamelCase(s)
-		// Convert all parts to lowercase for consistency
 		for i := range parts {
 			parts[i] = strings.ToLower(parts[i])
 		}
@@ -207,7 +206,6 @@ func splitCamelCase(s string) []string {
 	runes := []rune(s)
 
 	for i := 0; i < len(runes); i++ {
-		// Handle start of acronym
 		if isUpper(runes[i]) && i > 0 && !isUpper(runes[i-1]) {
 			if len(current) > 0 {
 				parts = append(parts, string(current))
@@ -215,7 +213,6 @@ func splitCamelCase(s string) []string {
 			}
 			current = append(current, runes[i])
 		} else if isUpper(runes[i]) && i+1 < len(runes) && !isUpper(runes[i+1]) && len(current) > 1 {
-			// End of acronym
 			parts = append(parts, string(current))
 			current = []rune{runes[i]}
 		} else {
@@ -227,15 +224,13 @@ func splitCamelCase(s string) []string {
 		parts = append(parts, string(current))
 	}
 
-	// Process parts for correct casing
 	for i := range parts {
 		if i == 0 && !isUpper(runes[0]) {
 			parts[i] = strings.ToLower(parts[i])
 		} else if isAllUpper(parts[i]) {
-			// Keep acronyms as-is
 			continue
 		} else if i > 0 || isUpper(runes[0]) {
-			parts[i] = strings.Title(strings.ToLower(parts[i]))
+			parts[i] = cases.Title(language.English).String(strings.ToLower(parts[i]))
 		}
 	}
 
