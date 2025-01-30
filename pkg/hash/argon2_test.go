@@ -38,7 +38,7 @@ func TestArgon2idStringToString(t *testing.T) {
 	i.Equal(len(parts), 6)
 	i.Equal(parts[1], "argon2id")
 	i.Equal(parts[2], "v=19")
-	i.True(strings.HasPrefix(parts[3], "m=2,t=32768,p=4"))
+	i.True(strings.HasPrefix(parts[3], "m=32768,t=3,p=4")) // Updated to match default params
 
 	_, err = base64.RawStdEncoding.DecodeString(parts[4])
 	i.NoErr(err)
