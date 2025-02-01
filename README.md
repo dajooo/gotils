@@ -33,6 +33,12 @@ I created this library because existing solutions didn't provide all the utiliti
 - `FilterInstanceOf[T](s []any) []T` - Filters slice elements by type assertion
 - `FilterNotNil[T](s []*T) []T` - Filters out nil elements from slice of pointers
 
+### Maps
+- `Keys[K comparable, V any](m map[K]V) []K` - Extracts all keys from a map into a slice
+- `Values[K comparable, V any](m map[K]V) []V` - Extracts all values from a map into a slice
+- `Entries[K comparable, V any](m map[K]V) []Entry[K, V]` - Converts a map into a slice of key-value entries
+- `MapEntries[K comparable, V any, O any](m map[K]V, f func(Entry[K, V]) O) []O` - Maps a function over map entries to create a new slice
+
 ### File
 #### Read
 - `Read(path string) ([]byte, error)` - Reads file as bytes
