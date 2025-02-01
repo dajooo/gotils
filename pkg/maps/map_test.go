@@ -61,6 +61,70 @@ func TestEntries(t *testing.T) {
 	i.Equal(entries[0].Value, 1)
 }
 
+func TestEntryOf(t *testing.T) {
+	i := is.New(t)
+
+	entry1 := EntryOf("age", 25)
+	i.Equal(entry1.Key, "age")
+	i.Equal(entry1.Value, 25)
+
+	entry2 := EntryOf(1, "one")
+	i.Equal(entry2.Key, 1)
+	i.Equal(entry2.Value, "one")
+
+	entry3 := EntryOf(true, 3.14)
+	i.Equal(entry3.Key, true)
+	i.Equal(entry3.Value, 3.14)
+
+	entry4 := EntryOf[string, any]("key", 123)
+	i.Equal(entry4.Key, "key")
+	i.Equal(entry4.Value, 123)
+
+	entries := []Entry[string, int]{
+		EntryOf("one", 1),
+		EntryOf("two", 2),
+	}
+	m := FromEntries(entries)
+	i.Equal(m["one"], 1)
+	i.Equal(m["two"], 2)
+}
+
+func TestFromEntries(t *testing.T) {
+	i := is.New(t)
+
+	entries1 := []Entry[string, int]{
+		{Key: "one", Value: 1},
+		{Key: "two", Value: 2},
+		{Key: "three", Value: 3},
+	}
+	result1 := FromEntries(entries1)
+	i.Equal(len(result1), 3)
+	i.Equal(result1["one"], 1)
+	i.Equal(result1["two"], 2)
+	i.Equal(result1["three"], 3)
+
+	emptyEntries := []Entry[string, int]{}
+	emptyResult := FromEntries(emptyEntries)
+	i.Equal(len(emptyResult), 0)
+
+	entries2 := []Entry[string, string]{
+		{Key: "key", Value: "first"},
+		{Key: "key", Value: "second"},
+	}
+	result2 := FromEntries(entries2)
+	i.Equal(len(result2), 1)
+	i.Equal(result2["key"], "second")
+
+	entries3 := []Entry[int, bool]{
+		{Key: 1, Value: true},
+		{Key: 2, Value: false},
+	}
+	result3 := FromEntries(entries3)
+	i.Equal(len(result3), 2)
+	i.Equal(result3[1], true)
+	i.Equal(result3[2], false)
+}
+
 func TestMapEntries(t *testing.T) {
 	i := is.New(t)
 

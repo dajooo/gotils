@@ -5,6 +5,10 @@ type Entry[K comparable, V any] struct {
 	Value V
 }
 
+func EntryOf[K comparable, V any](key K, value V) Entry[K, V] {
+	return Entry[K, V]{Key: key, Value: value}
+}
+
 func Keys[K comparable, V any](m map[K]V) []K {
 	keys := make([]K, 0, len(m))
 	for k := range m {
@@ -27,6 +31,14 @@ func Entries[K comparable, V any](m map[K]V) []Entry[K, V] {
 		entries = append(entries, Entry[K, V]{Key: k, Value: v})
 	}
 	return entries
+}
+
+func FromEntries[K comparable, V any](entries []Entry[K, V]) map[K]V {
+	m := make(map[K]V, len(entries))
+	for _, e := range entries {
+		m[e.Key] = e.Value
+	}
+	return m
 }
 
 func MapEntries[K comparable, V any, O any](m map[K]V, f func(Entry[K, V]) O) []O {

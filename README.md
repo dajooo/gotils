@@ -35,7 +35,9 @@ I created this library because existing solutions didn't provide all the utiliti
 
 ### Maps
 - `Entries[K comparable, V any](m map[K]V) []Entry[K, V]` - Converts a map into a slice of key-value entries
+- `EntryOf[K comparable, V any](key K, value V) Entry[K, V]` - Creates an entry from a key-value pair
 - `Filter[K comparable, V any](m map[K]V, f func(Entry[K, V]) bool) map[K]V` - Returns a new map containing only the entries that satisfy the filter function
+- `FromEntries[K comparable, V any](entries []Entry[K, V]) map[K]V` - Creates a map from a slice of key-value entries
 - `JoinEntries(m map[string]string, delimiter string) []string` - Converts a map to a slice of strings with key and value joined by delimiter
 - `Keys[K comparable, V any](m map[K]V) []K` - Extracts all keys from a map into a slice
 - `MapEntries[K comparable, V any, O any](m map[K]V, f func(Entry[K, V]) O) []O` - Maps a function over map entries to create a new slice
