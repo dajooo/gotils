@@ -34,10 +34,12 @@ I created this library because existing solutions didn't provide all the utiliti
 - `FilterNotNil[T](s []*T) []T` - Filters out nil elements from slice of pointers
 
 ### Maps
-- `Keys[K comparable, V any](m map[K]V) []K` - Extracts all keys from a map into a slice
-- `Values[K comparable, V any](m map[K]V) []V` - Extracts all values from a map into a slice
 - `Entries[K comparable, V any](m map[K]V) []Entry[K, V]` - Converts a map into a slice of key-value entries
+- `Filter[K comparable, V any](m map[K]V, f func(Entry[K, V]) bool) map[K]V` - Returns a new map containing only the entries that satisfy the filter function
+- `JoinEntries(m map[string]string, delimiter string) []string` - Converts a map to a slice of strings with key and value joined by delimiter
+- `Keys[K comparable, V any](m map[K]V) []K` - Extracts all keys from a map into a slice
 - `MapEntries[K comparable, V any, O any](m map[K]V, f func(Entry[K, V]) O) []O` - Maps a function over map entries to create a new slice
+- `Values[K comparable, V any](m map[K]V) []V` - Extracts all values from a map into a slice
 
 ### File
 #### Read

@@ -36,3 +36,19 @@ func MapEntries[K comparable, V any, O any](m map[K]V, f func(Entry[K, V]) O) []
 	}
 	return result
 }
+
+func Filter[K comparable, V any](m map[K]V, f func(Entry[K, V]) bool) map[K]V {
+	result := make(map[K]V, len(m))
+	for k, v := range m {
+		if f(Entry[K, V]{Key: k, Value: v}) {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+func JoinEntries(m map[string]string, delimiter string) []string {
+	return MapEntries(m, func(e Entry[string, string]) string {
+		return e.Key + delimiter + e.Value
+	})
+}
