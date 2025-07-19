@@ -34,6 +34,8 @@ I created this library because existing solutions didn't provide all the utiliti
 - `FilterNotNil[T](s []*T) []T` - Filters out nil elements from slice of pointers
 - `Repeat[T any](count int, elem T) []T` - Creates a slice with repeated elements
 - `RepeatFunc[T any](count int, f func(index int) T) []T` - Creates a slice by calling function for each index
+- `RepeatStream[T any](count int, elem T) <-chan T` - Creates a channel stream with repeated elements
+- `RepeatStreamFunc[T any](count int, f func(index int) T) <-chan T` - Creates a channel stream by calling function for each index
 
 ### Maps
 - `Entries[K comparable, V any](m map[K]V) []Entry[K, V]` - Converts a map into a slice of key-value entries
@@ -83,7 +85,8 @@ URL-safe variants:
 - `B64URLEncodeBytes(data []byte, padding ...rune) string` - URL-safe base64 encoding of bytes
 - `B64URLDecodeBytes(data []byte) (string, error)` - URL-safe base64 decoding to string
 
-### Case
+### String Utilities
+#### Case
 - `DetectCase(s string) StringCaseKind` - Detects the case style of a string
 - `ParseCase(s string) StringCase` - Parses a string into its case parts
 - `(StringCase) ToCamelCase() string` - Converts to camelCase

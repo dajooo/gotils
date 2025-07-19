@@ -15,3 +15,25 @@ func RepeatFunc[T any](count int, f func(index int) T) []T {
 	}
 	return result
 }
+
+func RepeatStream[T any](count int, elem T) <-chan T {
+	out := make(chan T)
+	go func() {
+		defer close(out)
+		for i := 0; i < count; i++ {
+			out <- elem
+		}
+	}()
+	return out
+}
+
+func RepeatStreamFunc[T any](count int, f func(index int) T) <-chan T {
+	out := make(chan T)
+	go func() {
+		defer close(out)
+		for i := 0; i < count; i++ {
+			out <- f(i)
+		}
+	}()
+	return out
+}
