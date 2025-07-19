@@ -32,8 +32,8 @@ I created this library because existing solutions didn't provide all the utiliti
 - `Filter[T](s []T, f func(T) bool) []T` - Filters slice elements based on predicate function
 - `FilterInstanceOf[T](s []any) []T` - Filters slice elements by type assertion
 - `FilterNotNil[T](s []*T) []T` - Filters out nil elements from slice of pointers
-- `Repeat[T any](count int, elem T) T` - Creates a slice with repeated elements and returns the first element
-- `RepeatFunc[T any](count int, f func(index int) T) T` - Creates a slice by calling function for each index and returns the first element
+- `Repeat[T any](count int, elem T) []T` - Creates a slice with repeated elements
+- `RepeatFunc[T any](count int, f func(index int) T) []T` - Creates a slice by calling function for each index
 
 ### Maps
 - `Entries[K comparable, V any](m map[K]V) []Entry[K, V]` - Converts a map into a slice of key-value entries

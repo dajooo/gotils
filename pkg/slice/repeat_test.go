@@ -13,37 +13,36 @@ func TestRepeat(t *testing.T) {
 	t.Run("repeat string", func(t *testing.T) {
 		is := is.New(t)
 		result := Repeat(5, "hello")
-		is.Equal(result, "hello")
+		expected := []string{"hello", "hello", "hello", "hello", "hello"}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat integer", func(t *testing.T) {
 		is := is.New(t)
 		result := Repeat(3, 42)
-		is.Equal(result, 42)
+		expected := []int{42, 42, 42}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat boolean", func(t *testing.T) {
 		is := is.New(t)
 		result := Repeat(2, true)
-		is.Equal(result, true)
+		expected := []bool{true, true}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat with count 1", func(t *testing.T) {
 		is := is.New(t)
 		result := Repeat(1, "single")
-		is.Equal(result, "single")
+		expected := []string{"single"}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat with count 0", func(t *testing.T) {
 		is := is.New(t)
-		defer func() {
-			if r := recover(); r != nil {
-				is.True(true)
-			} else {
-				is.Fail()
-			}
-		}()
-		Repeat(0, "empty")
+		result := Repeat(0, "empty")
+		expected := []string{}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat struct", func(t *testing.T) {
@@ -54,14 +53,16 @@ func TestRepeat(t *testing.T) {
 		}
 		person := Person{Name: "John", Age: 30}
 		result := Repeat(3, person)
-		is.Equal(result, person)
+		expected := []Person{person, person, person}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat slice", func(t *testing.T) {
 		is := is.New(t)
 		slice := []int{1, 2, 3}
 		result := Repeat(2, slice)
-		is.Equal(result, slice)
+		expected := [][]int{slice, slice}
+		is.Equal(result, expected)
 	})
 }
 
@@ -73,15 +74,17 @@ func TestRepeatFunc(t *testing.T) {
 		result := RepeatFunc(5, func(index int) int {
 			return index * 2
 		})
-		is.Equal(result, 0)
+		expected := []int{0, 2, 4, 6, 8}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat func with string formatting", func(t *testing.T) {
 		is := is.New(t)
 		result := RepeatFunc(3, func(index int) string {
-			return "item-" + string(rune('0'+index))
+			return fmt.Sprintf("item-%d", index)
 		})
-		is.Equal(result, "item-0")
+		expected := []string{"item-0", "item-1", "item-2"}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat func with boolean logic", func(t *testing.T) {
@@ -89,7 +92,8 @@ func TestRepeatFunc(t *testing.T) {
 		result := RepeatFunc(4, func(index int) bool {
 			return index%2 == 0
 		})
-		is.Equal(result, true)
+		expected := []bool{true, false, true, false}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat func with count 1", func(t *testing.T) {
@@ -97,23 +101,17 @@ func TestRepeatFunc(t *testing.T) {
 		result := RepeatFunc(1, func(index int) string {
 			return "only"
 		})
-		is.Equal(result, "only")
+		expected := []string{"only"}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat func with count 0", func(t *testing.T) {
 		is := is.New(t)
-
-		defer func() {
-			if r := recover(); r != nil {
-
-				is.True(true)
-			} else {
-				is.Fail()
-			}
-		}()
-		RepeatFunc(0, func(index int) string {
+		result := RepeatFunc(0, func(index int) string {
 			return "never called"
 		})
+		expected := []string{}
+		is.Equal(result, expected)
 	})
 
 	t.Run("repeat func with struct creation", func(t *testing.T) {
@@ -123,9 +121,13 @@ func TestRepeatFunc(t *testing.T) {
 			Value string
 		}
 		result := RepeatFunc(3, func(index int) Item {
-			return Item{ID: index, Value: "value-" + string(rune('A'+index))}
+			return Item{ID: index, Value: fmt.Sprintf("value-%c", 'A'+index)}
 		})
-		expected := Item{ID: 0, Value: "value-A"}
+		expected := []Item{
+			{ID: 0, Value: "value-A"},
+			{ID: 1, Value: "value-B"},
+			{ID: 2, Value: "value-C"},
+		}
 		is.Equal(result, expected)
 	})
 
@@ -135,7 +137,8 @@ func TestRepeatFunc(t *testing.T) {
 		result := RepeatFunc(2, func(index int) int {
 			return index * multiplier
 		})
-		is.Equal(result, 0)
+		expected := []int{0, 10}
+		is.Equal(result, expected)
 	})
 }
 
@@ -151,18 +154,4 @@ func BenchmarkRepeatFunc(b *testing.B) {
 			return index * 2
 		})
 	}
-}
-
-func ExampleRepeat() {
-	result := Repeat(3, "hello")
-	fmt.Println(result)
-
-}
-
-func ExampleRepeatFunc() {
-	result := RepeatFunc(3, func(index int) int {
-		return index * 10
-	})
-	fmt.Println(result)
-
 }
