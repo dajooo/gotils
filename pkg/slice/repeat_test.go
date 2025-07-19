@@ -174,8 +174,7 @@ func TestRepeatStream(t *testing.T) {
 		for val := range ch {
 			result = append(result, val)
 		}
-		expected := []string{}
-		is.Equal(result, expected)
+		is.Equal(len(result), 0)
 	})
 
 	t.Run("repeat stream with count 1", func(t *testing.T) {
@@ -228,8 +227,7 @@ func TestRepeatStreamFunc(t *testing.T) {
 		for val := range ch {
 			result = append(result, val)
 		}
-		expected := []string{}
-		is.Equal(result, expected)
+		is.Equal(len(result), 0)
 	})
 
 	t.Run("repeat stream func with boolean logic", func(t *testing.T) {

@@ -102,6 +102,9 @@ Supported case types:
 - KebabCase (e.g. "kebab-case")
 - ScreamingSnakeCase (e.g. "SCREAMING_SNAKE_CASE")
 
+### Join
+- `JoinStream(sep string, stringChan <-chan string) string` - Joins strings from a channel with separator
+
 ### Hash
 #### Argon2id
 Password hashing functions using Argon2id with configurable parameters:
